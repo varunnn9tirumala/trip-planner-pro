@@ -1,0 +1,111 @@
+import { Hotel, CriteriaMatch, HotelFilters } from '@/types/hotel';
+
+export const fullMatchHotels: Hotel[] = [
+  {
+    id: 1,
+    name: "Le Méridien Étoile",
+    stars: 5,
+    rating: 4.8,
+    price: 320,
+    location: "City Center, Paris",
+    amenities: ["WiFi", "Pool", "Gym", "Spa", "Breakfast"],
+    matchPercentage: 100,
+    gradient: "hotel-gradient-1",
+  },
+  {
+    id: 2,
+    name: "Hôtel Plaza Athénée",
+    stars: 5,
+    rating: 4.9,
+    price: 450,
+    location: "City Center, Paris",
+    amenities: ["WiFi", "Pool", "Gym", "Spa", "Breakfast", "Restaurant"],
+    matchPercentage: 98,
+    gradient: "hotel-gradient-2",
+  },
+  {
+    id: 3,
+    name: "Sofitel Le Faubourg",
+    stars: 5,
+    rating: 4.7,
+    price: 280,
+    location: "City Center, Paris",
+    amenities: ["WiFi", "Pool", "Spa", "Breakfast", "Bar"],
+    matchPercentage: 95,
+    gradient: "hotel-gradient-3",
+  },
+  {
+    id: 4,
+    name: "The Ritz Paris",
+    stars: 5,
+    rating: 4.9,
+    price: 520,
+    location: "City Center, Paris",
+    amenities: ["WiFi", "Pool", "Gym", "Spa", "Breakfast", "Restaurant", "Bar"],
+    matchPercentage: 100,
+    gradient: "hotel-gradient-1",
+  },
+];
+
+export const partialMatchHotels: Hotel[] = [
+  {
+    id: 5,
+    name: "Ibis Paris Gare de Lyon",
+    stars: 3,
+    rating: 3.8,
+    price: 95,
+    location: "Near Station, Paris",
+    amenities: ["WiFi", "Breakfast"],
+    matchPercentage: 45,
+    gradient: "hotel-gradient-4",
+  },
+  {
+    id: 6,
+    name: "Novotel Tour Eiffel",
+    stars: 4,
+    rating: 4.2,
+    price: 180,
+    location: "Tourist Area, Paris",
+    amenities: ["WiFi", "Gym", "Breakfast", "Parking"],
+    matchPercentage: 65,
+    gradient: "hotel-gradient-5",
+  },
+  {
+    id: 7,
+    name: "Best Western Marais",
+    stars: 3,
+    rating: 3.5,
+    price: 110,
+    location: "Suburban, Paris",
+    amenities: ["WiFi", "Parking"],
+    matchPercentage: 35,
+    gradient: "hotel-gradient-6",
+  },
+  {
+    id: 8,
+    name: "Mercure Montmartre",
+    stars: 3,
+    rating: 3.9,
+    price: 130,
+    location: "Tourist Area, Paris",
+    amenities: ["WiFi", "Breakfast", "Bar"],
+    matchPercentage: 55,
+    gradient: "hotel-gradient-4",
+  },
+];
+
+export const getFullCriteria = (filters: HotelFilters): CriteriaMatch[] => [
+  { label: `Price Range: ${filters.priceRange.replace('-', ' ')}`, matched: true },
+  { label: `Star Rating: ${filters.starRating.join(', ')} star(s)`, matched: true },
+  { label: `Location: ${filters.location.replace(/-/g, ' ')}`, matched: true },
+  { label: `Rooms Available: ${filters.rooms}`, matched: true },
+  { label: `Amenities: ${filters.amenities.join(', ')}`, matched: true },
+];
+
+export const getPartialCriteria = (filters: HotelFilters): CriteriaMatch[] => [
+  { label: `Price Range: ${filters.priceRange.replace('-', ' ')}`, matched: false },
+  { label: `Star Rating: ${filters.starRating.join(', ')} star(s)`, matched: false },
+  { label: `Location: ${filters.location.replace(/-/g, ' ')}`, matched: true },
+  { label: `Rooms Available: ${filters.rooms}`, matched: true },
+  { label: `Amenities: ${filters.amenities.join(', ')}`, matched: false },
+];
