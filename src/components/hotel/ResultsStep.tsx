@@ -10,11 +10,11 @@ import {
   MapPin,
   Check,
   X,
-  User,
-  Bot,
   Building,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import humanAssistant from '@/assets/human-assistant.png';
+import robotAssistant from '@/assets/robot-assistant.png';
 
 interface Props {
   aiType: AIType;
@@ -148,37 +148,54 @@ const ResultsStep = ({ aiType, condition, searchParams, filters, onBack, onReset
               aiType === 'anthropogenic' ? 'ai-bg-anthropogenic' : 'ai-bg-robotic'
             }`}
           >
-            <div className="flex items-start gap-4">
-              <div
-                className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
-                  aiType === 'anthropogenic'
-                    ? 'bg-accent text-accent-foreground'
-                    : 'bg-primary text-primary-foreground'
-                }`}
-              >
-                {aiType === 'anthropogenic' ? (
-                  <User className="h-6 w-6" />
-                ) : (
-                  <Bot className="h-6 w-6" />
-                )}
-              </div>
-              <div>
-                <h3
-                  className={`text-lg font-bold mb-2 ${
-                    aiType === 'robotic' ? 'font-mono tracking-wider' : ''
-                  }`}
+            <div className="flex items-start gap-5">
+              {/* Assistant Avatar */}
+              <div className="shrink-0">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
                 >
-                  {aiMsg.title}
-                </h3>
-                <p
-                  className={`leading-relaxed ${
-                    aiType === 'robotic'
-                      ? 'font-mono text-sm tracking-wide'
-                      : 'text-base'
-                  }`}
-                >
-                  {aiMsg.message}
+                  <img
+                    src={aiType === 'anthropogenic' ? humanAssistant : robotAssistant}
+                    alt={aiType === 'anthropogenic' ? 'Human AI Assistant' : 'Robot AI Assistant'}
+                    className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-card shadow-lg"
+                  />
+                </motion.div>
+                <p className={`text-xs text-center mt-2 font-semibold ${
+                  aiType === 'anthropogenic' ? 'text-accent' : 'text-primary'
+                }`}>
+                  {aiType === 'anthropogenic' ? 'Sara' : 'AI-X7'}
                 </p>
+              </div>
+
+              {/* Chat Bubble */}
+              <div className="flex-1 relative">
+                <div
+                  className={`absolute left-[-10px] top-4 w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent ${
+                    aiType === 'anthropogenic'
+                      ? 'border-r-[10px] border-r-card'
+                      : 'border-r-[10px] border-r-card'
+                  }`}
+                />
+                <div className="bg-card rounded-2xl p-5 shadow-md">
+                  <h3
+                    className={`text-lg font-bold mb-2 ${
+                      aiType === 'robotic' ? 'font-mono tracking-wider' : ''
+                    }`}
+                  >
+                    {aiMsg.title}
+                  </h3>
+                  <p
+                    className={`leading-relaxed ${
+                      aiType === 'robotic'
+                        ? 'font-mono text-sm tracking-wide'
+                        : 'text-base'
+                    }`}
+                  >
+                    {aiMsg.message}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
