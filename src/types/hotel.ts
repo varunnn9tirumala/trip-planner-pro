@@ -24,6 +24,9 @@ export interface Hotel {
   rating: number;
   price: number;
   location: string;
+  city: string;
+  country: string;
+  continent: string;
   amenities: string[];
   matchPercentage: number;
   gradient: string;
