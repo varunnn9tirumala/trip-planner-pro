@@ -1,51 +1,28 @@
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Plane, User, Bot, Check, X } from 'lucide-react';
+import { Plane, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 import heroImage from '@/assets/hero-travel.jpg';
+import humanAssistant from '@/assets/human-assistant.png';
+import robotAssistant from '@/assets/robot-assistant.png';
 
-const variants = [
+const assistants = [
   {
     aiType: 'anthropogenic',
-    condition: 'full',
-    title: 'Anthropogenic AI',
-    subtitle: 'Full Satisfaction',
-    description: 'Human-like, warm AI assistant that finds hotels matching ALL your requirements perfectly.',
-    icon: <User className="h-6 w-6" />,
-    matched: true,
-    isHuman: true,
-  },
-  {
-    aiType: 'anthropogenic',
-    condition: 'partial',
-    title: 'Anthropogenic AI',
-    subtitle: 'Partial Satisfaction',
-    description: 'Human-like, warm AI assistant that cannot fully satisfy all your preferences.',
-    icon: <User className="h-6 w-6" />,
-    matched: false,
-    isHuman: true,
+    name: 'Sara',
+    subtitle: 'Your Human-like Travel Assistant',
+    description:
+      'Warm, friendly, and empathetic — Sara chats with you like a real travel advisor, using natural language and emotional cues to understand your needs.',
+    image: humanAssistant,
   },
   {
     aiType: 'robotic',
-    condition: 'full',
-    title: 'Robotic AI',
-    subtitle: 'Full Satisfaction',
-    description: 'Machine-like, systematic AI that finds hotels matching ALL your requirements precisely.',
-    icon: <Bot className="h-6 w-6" />,
-    matched: true,
-    isHuman: false,
-  },
-  {
-    aiType: 'robotic',
-    condition: 'partial',
-    title: 'Robotic AI',
-    subtitle: 'Partial Satisfaction',
-    description: 'Machine-like, systematic AI that cannot fulfill all specified parameters.',
-    icon: <Bot className="h-6 w-6" />,
-    matched: false,
-    isHuman: false,
+    name: 'AI-X7',
+    subtitle: 'Systematic AI Travel Unit',
+    description:
+      'Precise, efficient, and data-driven — AI-X7 processes your requirements methodically and delivers results with machine-like accuracy.',
+    image: robotAssistant,
   },
 ];
 
@@ -54,11 +31,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="relative h-[50vh] min-h-[400px] overflow-hidden">
+      {/* Hero */}
+      <div className="relative h-[45vh] min-h-[350px] overflow-hidden">
         <img
           src={heroImage}
-          alt="Beautiful Paris skyline at sunset"
+          alt="Beautiful travel destination"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-primary/70 flex items-center justify-center">
@@ -75,92 +52,76 @@ const Index = () => {
                 </h1>
               </div>
               <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto">
-                Hotel Search Experience — Research Platform
+                Find your perfect hotel with AI assistance
               </p>
               <p className="text-sm text-primary-foreground/70 mt-3 max-w-lg mx-auto">
-                Compare how different AI personalities present hotel search results under varying satisfaction conditions
+                Choose your travel assistant and start chatting to discover the best hotels for your trip
               </p>
             </motion.div>
           </div>
         </div>
       </div>
 
-      {/* Research Condition Cards */}
-      <div className="max-w-5xl mx-auto px-4 py-12">
+      {/* Assistant Selection */}
+      <div className="max-w-4xl mx-auto px-4 py-14">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            Choose a Research Condition
+            Choose Your Travel Assistant
           </h2>
           <p className="text-muted-foreground mt-2">
-            2 AI Types × 2 Satisfaction Levels = 4 Conditions
+            Each assistant has a unique personality — pick the one you'd like to chat with
           </p>
         </div>
 
-        {/* Column Headers */}
-        <div className="grid grid-cols-2 gap-6 mb-3 pl-0">
-          <div className="text-center">
-            <Badge variant="outline" className="text-xs font-semibold px-3 py-1">
-              <Check className="h-3 w-3 mr-1" /> Full Satisfaction
-            </Badge>
-          </div>
-          <div className="text-center">
-            <Badge variant="outline" className="text-xs font-semibold px-3 py-1">
-              <X className="h-3 w-3 mr-1" /> Partial Satisfaction
-            </Badge>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {variants.map((v, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {assistants.map((a, i) => (
             <motion.div
-              key={`${v.aiType}-${v.condition}`}
-              initial={{ opacity: 0, y: 20 }}
+              key={a.aiType}
+              initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
+              transition={{ delay: 0.2 + i * 0.15, duration: 0.5 }}
             >
               <Card
-                className={`cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-                  v.isHuman
+                className={`cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border-2 ${
+                  a.aiType === 'anthropogenic'
                     ? 'border-accent/30 hover:border-accent'
                     : 'border-primary/30 hover:border-primary'
                 }`}
-                onClick={() => navigate(`/search/${v.aiType}/${v.condition}`)}
+                onClick={() => navigate(`/chat/${a.aiType}`)}
               >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-11 h-11 rounded-full flex items-center justify-center ${
-                          v.isHuman
-                            ? 'bg-accent/10 text-accent'
-                            : 'bg-primary/10 text-primary'
-                        }`}
-                      >
-                        {v.icon}
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{v.title}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{v.subtitle}</p>
-                      </div>
-                    </div>
-                    {v.matched ? (
-                      <Badge className="bg-success text-success-foreground text-xs">
-                        <Check className="h-3 w-3 mr-1" /> All Met
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary" className="text-xs">
-                        <X className="h-3 w-3 mr-1" /> Partial
-                      </Badge>
-                    )}
-                  </div>
+                <CardHeader className="text-center pb-2 pt-8">
+                  <motion.img
+                    src={a.image}
+                    alt={a.name}
+                    className={`w-28 h-28 rounded-full object-cover mx-auto border-4 shadow-lg ${
+                      a.aiType === 'anthropogenic' ? 'border-accent/50' : 'border-primary/50'
+                    }`}
+                    whileHover={{ scale: 1.08 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  />
+                  <CardTitle className={`text-2xl mt-4 ${
+                    a.aiType === 'robotic' ? 'font-mono tracking-wider' : ''
+                  }`}>
+                    {a.name}
+                  </CardTitle>
+                  <p className={`text-sm ${
+                    a.aiType === 'anthropogenic' ? 'text-accent' : 'text-primary'
+                  }`}>
+                    {a.subtitle}
+                  </p>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-sm mb-4">{v.description}</p>
+                <CardContent className="text-center pb-8">
+                  <p className="text-muted-foreground text-sm mb-6">
+                    {a.description}
+                  </p>
                   <Button
+                    size="lg"
                     className="w-full"
-                    variant={v.isHuman ? 'default' : 'outline'}
+                    variant={a.aiType === 'anthropogenic' ? 'default' : 'outline'}
                   >
-                    Start Simulation →
+                    {a.aiType === 'anthropogenic'
+                      ? 'Chat with Sara 💬'
+                      : 'INITIALIZE AI-X7 ▶'}
                   </Button>
                 </CardContent>
               </Card>
@@ -168,8 +129,16 @@ const Index = () => {
           ))}
         </div>
 
-        <div className="text-center mt-10 text-xs text-muted-foreground">
-          <p>This is a research tool for studying AI interaction design in hotel booking experiences.</p>
+        {/* Admin link */}
+        <div className="text-center mt-12">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground text-xs"
+            onClick={() => navigate('/admin')}
+          >
+            <Settings className="h-3 w-3 mr-1" /> Admin Panel
+          </Button>
         </div>
       </div>
     </div>
