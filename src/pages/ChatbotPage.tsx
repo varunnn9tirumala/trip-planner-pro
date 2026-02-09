@@ -100,8 +100,8 @@ const ChatbotPage = () => {
     const timer = setTimeout(() => {
       addAIMessage(
         t(
-          "Hey there! 👋 Welcome to TripMatch!\n\nI'm Sara, and I'll be your personal travel buddy today. I absolutely love helping people plan their dream getaways — there's nothing better than finding that perfect hotel, right? 😄\n\nSo tell me, where are you flying out from? Drop me your city and let's get this adventure started! ✈️",
-          "⚡ SYSTEM ONLINE — AI-X7 Travel Module v3.2 activated.\n\nGreetings, traveler. I am AI-X7, your intelligent hotel search companion. My neural networks have been trained on millions of travel data points to find you the optimal accommodation.\n\nLet's begin the search sequence.\n📍 First, I need your departure city — where will you be traveling from?"
+          "Hey there! 👋 Welcome to TripMatch!\n\nI'm Sara, and I'll be your personal travel buddy today. I absolutely love helping people plan their dream getaways — there's nothing better than finding that perfect hotel, right? 😄\n\nLet's get started!\n\n👉 Which city are you traveling FROM? (e.g., New York, London, Mumbai)",
+          "⚡ SYSTEM ONLINE — AI-X7 Travel Module v3.2 activated.\n\nGreetings, traveler. I am AI-X7, your intelligent hotel search companion. My neural networks have been trained on millions of travel data points to find you the optimal accommodation.\n\nLet's begin the search sequence.\n\n👉 Enter your DEPARTURE CITY — the city you will be flying from. (e.g., New York, London, Mumbai)"
         )
       );
       setCurrentStep('ask-from');
@@ -137,8 +137,8 @@ const ChatbotPage = () => {
         setSearchParams((p) => ({ ...p, from: value }));
         addAIMessage(
           t(
-            `Oh nice, ${value}! I love that area 😊\n\nNow here's the fun part — where do you want to escape to? 🌴 Give me your dream destination and I'll work my magic!`,
-            `📡 Origin locked in: ${value} ✓\n\nExcellent. Now, let's pinpoint your destination.\n🎯 Where would you like to travel to? I'll cross-reference it against my global hotel database.`
+            `Oh nice, ${value}! I love that area 😊\n\nNow here's the fun part — time to pick your dream destination!\n\n👉 Which city do you want to TRAVEL TO? (e.g., Paris, Tokyo, Dubai)`,
+            `📡 Origin locked in: ${value} ✓\n\nExcellent. Now, let's pinpoint your destination.\n\n👉 Enter your DESTINATION CITY — where do you want to go? (e.g., Paris, Tokyo, Dubai)`
           )
         );
         setCurrentStep('ask-to');
@@ -149,8 +149,8 @@ const ChatbotPage = () => {
         setSearchParams((p) => ({ ...p, to: value }));
         addAIMessage(
           t(
-            `${value}?! Oh you have GREAT taste! 😍 That's going to be an incredible trip.\n\nOkay, let's nail down the timing — when are you planning to check in? You can say something like "March 15" or "next Friday"!`,
-            `🗺️ Destination confirmed: ${value}\n\nSolid choice — my data shows excellent hotel availability in that region.\n\n📅 Next up: What's your check-in date? (Any format works — I'll parse it.)`
+            `${value}?! Oh you have GREAT taste! 😍 That's going to be an incredible trip.\n\nOkay, let's nail down the timing!\n\n👉 What is your CHECK-IN date? (e.g., March 15, 2025 or 15/03/2025)`,
+            `🗺️ Destination confirmed: ${value}\n\nSolid choice — my data shows excellent hotel availability in that region.\n\n👉 Enter your CHECK-IN DATE. (e.g., March 15, 2025 or 15/03/2025)`
           )
         );
         setCurrentStep('ask-checkin');
@@ -161,8 +161,8 @@ const ChatbotPage = () => {
         setSearchParams((p) => ({ ...p, checkIn: value }));
         addAIMessage(
           t(
-            `Noted — checking in on ${value}! ✅\n\nAnd when do you want to wrap up the trip? What's your check-out date? 🗓️`,
-            `✓ Check-in date registered: ${value}\n\n📅 Now I need your check-out date to calculate the optimal stay duration.`
+            `Noted — checking in on ${value}! ✅\n\nNow I need to know when you're leaving.\n\n👉 What is your CHECK-OUT date? (e.g., March 20, 2025 or 20/03/2025)`,
+            `✓ Check-in date registered: ${value}\n\n👉 Enter your CHECK-OUT DATE. (e.g., March 20, 2025 or 20/03/2025)`
           )
         );
         setCurrentStep('ask-checkout');
@@ -173,8 +173,8 @@ const ChatbotPage = () => {
         setSearchParams((p) => ({ ...p, checkOut: value }));
         addAIMessage(
           t(
-            `Perfect, ${value} it is! This is shaping up to be an amazing trip already 🙌\n\nQuick question — how many people are joining? Including yourself! 👥`,
-            `✓ Check-out date set: ${value}\n\nTravel window established. Now configuring occupancy.\n👥 How many guests total? (Include yourself in the count.)`
+            `Perfect, ${value} it is! This is shaping up to be an amazing trip already 🙌\n\n👉 How many GUESTS will be staying? (Type a number, e.g., 1, 2, 4 — include yourself!)`,
+            `✓ Check-out date set: ${value}\n\nTravel window established. Now configuring occupancy.\n\n👉 How many GUESTS in total? (Enter a number — include yourself.)`
           )
         );
         setCurrentStep('ask-guests');
@@ -185,8 +185,8 @@ const ChatbotPage = () => {
         setSearchParams((p) => ({ ...p, guests: parseInt(value) || 2 }));
         addAIMessage(
           t(
-            `${parseInt(value) === 1 ? "A solo adventure — love it! 🧳" : parseInt(value) === 2 ? "A trip for two — how lovely! 💑" : `A group of ${value} — this is going to be so much fun! 🎊`}\n\nNow let's talk about your budget. No judgment here — whether you're backpacking or going all-out luxury, I've got you covered! 💸\n\nWhat's your price range per night?`,
-            `👥 Guest count: ${value} — acknowledged.\n\nNow entering preference calibration phase.\n💰 What's your budget per night? Select a tier below to optimize my search algorithm.`
+            `${parseInt(value) === 1 ? "A solo adventure — love it! 🧳" : parseInt(value) === 2 ? "A trip for two — how lovely! 💑" : `A group of ${value} — this is going to be so much fun! 🎊`}\n\nNow let's talk about your budget. No judgment here! 💸\n\n👉 What is your PRICE RANGE per night? Pick one below:`,
+            `👥 Guest count: ${value} — acknowledged.\n\nNow entering preference calibration phase.\n\n👉 Select your BUDGET PER NIGHT from the options below:`
           ),
           [
             { label: '💰 Budget ($0–$100)', value: 'budget' },
@@ -201,8 +201,8 @@ const ChatbotPage = () => {
         setFilters((f) => ({ ...f, priceRange: value }));
         addAIMessage(
           t(
-            `${value === 'luxury' ? "Ooh, treating yourself — I love it! 💎✨" : value === 'mid-range' ? "Smart choice — great value without compromising quality! 👌" : "Budget-friendly is the way to go — there are some hidden gems out there! 🔑"}\n\nWhat about star rating? How fancy are we going? ⭐`,
-            `💰 Budget tier: ${value.toUpperCase()} — locked in.\n\nNext parameter: Hotel classification.\n⭐ Select your preferred star rating to refine the search matrix.`
+            `${value === 'luxury' ? "Ooh, treating yourself — I love it! 💎✨" : value === 'mid-range' ? "Smart choice — great value without compromising quality! 👌" : "Budget-friendly is the way to go — there are some hidden gems out there! 🔑"}\n\n👉 What STAR RATING do you prefer? Pick one below:`,
+            `💰 Budget tier: ${value.toUpperCase()} — locked in.\n\n👉 Select your preferred STAR RATING from the options below:`
           ),
           [
             { label: '⭐⭐⭐ 3-Star', value: '3' },
@@ -219,8 +219,8 @@ const ChatbotPage = () => {
         setFilters((f) => ({ ...f, starRating: stars.length ? stars : [4, 5] }));
         addAIMessage(
           t(
-            `${stars.includes(5) ? "Five stars — going all out! 🌟" : "Great pick!"} Almost there, I promise! 😄\n\nHow many rooms will you need? Just type a number! 🏨`,
-            `⭐ Star classification set: ${value}-star properties.\n\nConfiguration progress: 70% complete.\n🏨 How many rooms do you require? Enter a number.`
+            `${stars.includes(5) ? "Five stars — going all out! 🌟" : "Great pick!"} Almost there, I promise! 😄\n\n👉 How many ROOMS do you need? (Type a number, e.g., 1, 2, 3)`,
+            `⭐ Star classification set: ${value}-star properties.\n\nConfiguration progress: 70% complete.\n\n👉 How many ROOMS do you need? (Enter a number, e.g., 1, 2, 3)`
           )
         );
         setCurrentStep('ask-rooms');
@@ -231,8 +231,8 @@ const ChatbotPage = () => {
         setFilters((f) => ({ ...f, rooms: parseInt(value) || 1 }));
         addAIMessage(
           t(
-            `${parseInt(value) > 1 ? `${value} rooms — noted! 📝` : "Just one cozy room — perfect! 🛏️"}\n\nNow, location matters a LOT for a great trip. Where do you want your hotel to be? Right in the action, or somewhere more peaceful? 🗺️`,
-            `🏨 Rooms: ${value} — confirmed.\n\nNow optimizing for location. Your hotel's position can significantly impact travel efficiency.\n📍 Select your preferred zone within the destination.`
+            `${parseInt(value) > 1 ? `${value} rooms — noted! 📝` : "Just one cozy room — perfect! 🛏️"}\n\nLocation matters a LOT for a great trip! 🗺️\n\n👉 Where do you want your hotel to be LOCATED? Pick one below:`,
+            `🏨 Rooms: ${value} — confirmed.\n\nNow optimizing for location.\n\n👉 Select your preferred HOTEL LOCATION from the options below:`
           ),
           [
             { label: '🏙️ City Center', value: 'city-center' },
@@ -248,8 +248,8 @@ const ChatbotPage = () => {
         setFilters((f) => ({ ...f, location: value }));
         addAIMessage(
           t(
-            `${value === 'city-center' ? "City center — you'll be right in the heart of everything! 🏙️" : value === 'tourist-area' ? "Tourist area — close to all the must-see spots! 📸" : value === 'near-airport' ? "Near the airport — super convenient! ✈️" : "Suburban — peaceful and relaxing! 🏡"}\n\nOkay, last question — I promise! 🤞 Which amenities would make your stay extra special? Pick as many as you want!`,
-            `📍 Location zone: ${value.toUpperCase()} — registered.\n\n🔧 Final calibration step.\nSelect desired amenities to complete your search profile. Multiple selections permitted.`
+            `${value === 'city-center' ? "City center — you'll be right in the heart of everything! 🏙️" : value === 'tourist-area' ? "Tourist area — close to all the must-see spots! 📸" : value === 'near-airport' ? "Near the airport — super convenient! ✈️" : "Suburban — peaceful and relaxing! 🏡"}\n\nLast question — I promise! 🤞\n\n👉 Which AMENITIES are important to you? Pick one or more below:`,
+            `📍 Location zone: ${value.toUpperCase()} — registered.\n\nFinal calibration step.\n\n👉 Select your desired AMENITIES from the options below (you can pick multiple):`
           ),
           [
             { label: '📶 WiFi', value: 'wifi' },
