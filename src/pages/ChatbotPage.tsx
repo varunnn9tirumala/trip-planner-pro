@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams, useNavigate, useBlocker } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AIType,
@@ -43,6 +43,7 @@ const ChatbotPage = () => {
   const [showChecklist, setShowChecklist] = useState(false);
   const [showDecision, setShowDecision] = useState(false);
   const [sessionStart] = useState(Date.now());
+  const [decisionMade, setDecisionMade] = useState(false);
 
   // Collected data
   const [searchParams, setSearchParams] = useState<SearchParams>({
@@ -329,6 +330,7 @@ const ChatbotPage = () => {
   };
 
   const handleDecision = (decision: 'proceed' | 'discard') => {
+    setDecisionMade(true);
     addUserMessage(decision === 'proceed' ? 'I want to proceed!' : 'I\'ll discard this search.');
 
     const duration = Math.round((Date.now() - sessionStart) / 1000);
@@ -364,6 +366,34 @@ const ChatbotPage = () => {
       setInputDisabled(true);
     }, 600);
   };
+
+  // Block navigation until user makes a decision (proceed or discard)
+  const blocker = useBlocker(
+    useCallback(() => !decisionMade && currentStep !== 'greeting', [decisionMade, currentStep])
+  );
+
+  useEffect(() => {
+    if (blocker.state === 'blocked') {
+      const confirmed = window.confirm(
+        'You haven\'t made a decision yet! Please proceed or discard the deal before leaving. Are you sure you want to exit?'
+      );
+      if (confirmed) {
+        blocker.proceed();
+      } else {
+        blocker.reset();
+      }
+    }
+  }, [blocker]);
+
+  // Also block browser back/refresh
+  useEffect(() => {
+    if (decisionMade || currentStep === 'greeting') return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [decisionMade, currentStep]);
 
   useEffect(() => {
     if (!inputDisabled && inputRef.current) {
