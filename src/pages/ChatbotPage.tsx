@@ -132,7 +132,55 @@ const ChatbotPage = () => {
     setTimeout(() => processStep(value), 600);
   };
 
+  // Input validation
+  const isValidCity = (v: string) => /^[a-zA-ZÀ-ÿ\s\-'.]{2,50}$/.test(v);
+  const isValidDate = (v: string) => /\d/.test(v) && /[a-zA-Z\/\-,.]/.test(v) && v.length >= 6;
+  const isValidNumber = (v: string) => /^\d+$/.test(v) && parseInt(v) > 0 && parseInt(v) <= 20;
+
+  const validateInput = (step: ChatStep, value: string): string | null => {
+    switch (step) {
+      case 'ask-from':
+      case 'ask-to':
+        if (!isValidCity(value)) {
+          return t(
+            `Hmm, "${value}" doesn't look like a valid city name 🤔\n\nPlease enter a real city name — just letters, no numbers or special characters.\n\n👉 Try again! (e.g., New York, London, Mumbai)`,
+            `⚠️ INPUT ERROR: "${value}" is not a recognized city format.\n\nCity names must contain only letters (2–50 characters).\n\n👉 Re-enter a valid CITY NAME. (e.g., New York, London, Mumbai)`
+          );
+        }
+        return null;
+      case 'ask-checkin':
+      case 'ask-checkout':
+        if (!isValidDate(value)) {
+          return t(
+            `Oops! "${value}" doesn't look like a valid date 😅\n\nPlease enter a proper date so I can search for you.\n\n👉 Try again! (e.g., March 15, 2025 or 15/03/2025)`,
+            `⚠️ INPUT ERROR: "${value}" is not a valid date format.\n\nExpected format: text date or DD/MM/YYYY.\n\n👉 Re-enter a valid DATE. (e.g., March 15, 2025 or 15/03/2025)`
+          );
+        }
+        return null;
+      case 'ask-guests':
+      case 'ask-rooms':
+        if (!isValidNumber(value)) {
+          const field = step === 'ask-guests' ? 'guests' : 'rooms';
+          return t(
+            `Hmm, "${value}" isn't a valid number 😅\n\nPlease type a number between 1 and 20.\n\n👉 How many ${field.toUpperCase()}? (e.g., 1, 2, 4)`,
+            `⚠️ INPUT ERROR: "${value}" is not a valid number.\n\nExpected: integer between 1–20.\n\n👉 Enter number of ${field.toUpperCase()}. (e.g., 1, 2, 4)`
+          );
+        }
+        return null;
+      default:
+        return null;
+    }
+  };
+
   const processStep = (value: string) => {
+    // Validate input before processing
+    const validationError = validateInput(currentStep, value);
+    if (validationError) {
+      addAIMessage(validationError);
+      setInputDisabled(false);
+      return;
+    }
+
     switch (currentStep) {
       case 'ask-from':
         setSearchParams((p) => ({ ...p, from: value }));
