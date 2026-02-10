@@ -44,6 +44,10 @@ const AdminPanel = () => {
     if (auth === 'true') {
       setIsAuthenticated(true);
     }
+    // Auto-lock admin panel when leaving the page
+    return () => {
+      sessionStorage.removeItem('admin_auth');
+    };
   }, []);
 
   useEffect(() => {
