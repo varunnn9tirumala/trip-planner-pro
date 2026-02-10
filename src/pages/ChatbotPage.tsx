@@ -11,7 +11,7 @@ import {
   Hotel,
   CriteriaMatch,
 } from '@/types/hotel';
-import { fullMatchHotels, partialMatchHotels, getFullCriteria, getPartialCriteria } from '@/data/hotels';
+import { fullMatchHotels, partialMatchHotels, getFullCriteria, getPartialCriteria, getAllCities, getHotelsByCity, worldHotels } from '@/data/hotels';
 import { saveSession } from '@/utils/sessionStorage';
 import ChatMessageComponent from '@/components/hotel/ChatMessage';
 import HotelResultsCard from '@/components/hotel/HotelResultsCard';
@@ -133,21 +133,45 @@ const ChatbotPage = () => {
   };
 
   // Input validation
-  const isValidCity = (v: string) => /^[a-zA-ZÀ-ÿ\s\-'.]{2,50}$/.test(v);
+  const knownCities = getAllCities().map(c => c.toLowerCase());
+  const isKnownCity = (v: string) => {
+    const lower = v.toLowerCase().trim();
+    return knownCities.some(city => city === lower || city.includes(lower) || lower.includes(city));
+  };
+  const getSuggestedCities = (v: string): string[] => {
+    const lower = v.toLowerCase().trim();
+    return getAllCities().filter(city => 
+      city.toLowerCase().startsWith(lower[0]) || 
+      city.toLowerCase().includes(lower.slice(0, 3))
+    ).slice(0, 5);
+  };
   const isValidDate = (v: string) => /\d/.test(v) && /[a-zA-Z\/\-,.]/.test(v) && v.length >= 6;
   const isValidNumber = (v: string) => /^\d+$/.test(v) && parseInt(v) > 0 && parseInt(v) <= 20;
 
   const validateInput = (step: ChatStep, value: string): string | null => {
     switch (step) {
       case 'ask-from':
-      case 'ask-to':
-        if (!isValidCity(value)) {
+      case 'ask-to': {
+        // Check basic format first
+        if (!/^[a-zA-ZÀ-ÿ\s\-'.]{2,50}$/.test(value)) {
           return t(
             `Hmm, "${value}" doesn't look like a valid city name 🤔\n\nPlease enter a real city name — just letters, no numbers or special characters.\n\n👉 Try again! (e.g., New York, London, Mumbai)`,
             `⚠️ INPUT ERROR: "${value}" is not a recognized city format.\n\nCity names must contain only letters (2–50 characters).\n\n👉 Re-enter a valid CITY NAME. (e.g., New York, London, Mumbai)`
           );
         }
+        // For destination, validate against known cities in our database
+        if (step === 'ask-to' && !isKnownCity(value)) {
+          const suggestions = getSuggestedCities(value);
+          const suggestText = suggestions.length > 0 
+            ? `\n\nHere are some cities we have hotels in:\n${suggestions.map(s => `• ${s}`).join('\n')}`
+            : '';
+          return t(
+            `I'm sorry, but I couldn't find "${value}" in our hotel database 😅\n\nWe have hotels in 50+ cities worldwide! Please pick a city where we have hotels available.${suggestText}\n\n👉 Which city do you want to TRAVEL TO?`,
+            `⚠️ CITY NOT FOUND: "${value}" is not in our database.\n\nOur system covers 50+ cities across 6 continents.${suggestText}\n\n👉 Re-enter a valid DESTINATION CITY.`
+          );
+        }
         return null;
+      }
       case 'ask-checkin':
       case 'ask-checkout':
         if (!isValidDate(value)) {
@@ -451,7 +475,38 @@ const ChatbotPage = () => {
     }
   }, [inputDisabled]);
 
-  const hotels = condition === 'full' ? fullMatchHotels : partialMatchHotels;
+  // Filter hotels based on user's destination
+  const getDestinationHotels = (): Hotel[] => {
+    const dest = searchParams.to.toLowerCase().trim();
+    if (!dest) return condition === 'full' ? fullMatchHotels : partialMatchHotels;
+    
+    // Try exact city match first
+    let matched = worldHotels.filter(h => h.city.toLowerCase() === dest);
+    
+    // Try partial match
+    if (matched.length === 0) {
+      matched = worldHotels.filter(h => 
+        h.city.toLowerCase().includes(dest) || dest.includes(h.city.toLowerCase())
+      );
+    }
+    
+    // Try country match
+    if (matched.length === 0) {
+      matched = worldHotels.filter(h => h.country.toLowerCase().includes(dest));
+    }
+    
+    if (matched.length === 0) return condition === 'full' ? fullMatchHotels : partialMatchHotels;
+    
+    if (condition === 'full') {
+      // For full match: show best hotels sorted by matchPercentage
+      return matched.sort((a, b) => b.matchPercentage - a.matchPercentage).slice(0, 4);
+    } else {
+      // For partial match: show lower-match hotels
+      return matched.sort((a, b) => a.matchPercentage - b.matchPercentage).slice(0, 4);
+    }
+  };
+
+  const hotels = getDestinationHotels();
   const criteria = condition === 'full'
     ? getFullCriteria(filters)
     : getPartialCriteria(filters);
