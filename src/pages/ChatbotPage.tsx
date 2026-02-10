@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams, useNavigate, useBlocker } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AIType,
@@ -367,33 +367,35 @@ const ChatbotPage = () => {
     }, 600);
   };
 
-  // Block navigation until user makes a decision (proceed or discard)
-  const blocker = useBlocker(
-    useCallback(() => !decisionMade && currentStep !== 'greeting', [decisionMade, currentStep])
-  );
-
+  // Block browser back button and page refresh until decision is made
   useEffect(() => {
-    if (blocker.state === 'blocked') {
+    if (decisionMade || currentStep === 'greeting') return;
+
+    // Push a dummy state so pressing back triggers popstate
+    window.history.pushState(null, '', window.location.href);
+
+    const handlePopState = () => {
       const confirmed = window.confirm(
         'You haven\'t made a decision yet! Please proceed or discard the deal before leaving. Are you sure you want to exit?'
       );
       if (confirmed) {
-        blocker.proceed();
+        navigate('/');
       } else {
-        blocker.reset();
+        window.history.pushState(null, '', window.location.href);
       }
-    }
-  }, [blocker]);
+    };
 
-  // Also block browser back/refresh
-  useEffect(() => {
-    if (decisionMade || currentStep === 'greeting') return;
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
     };
+
+    window.addEventListener('popstate', handlePopState);
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [decisionMade, currentStep]);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [decisionMade, currentStep, navigate]);
 
   useEffect(() => {
     if (!inputDisabled && inputRef.current) {
@@ -413,7 +415,13 @@ const ChatbotPage = () => {
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <div
             className="flex items-center gap-2 cursor-pointer text-primary-foreground"
-            onClick={() => navigate('/')}
+            onClick={() => {
+              if (!decisionMade && currentStep !== 'greeting') {
+                const confirmed = window.confirm('You haven\'t made a decision yet! Please proceed or discard the deal before leaving. Are you sure you want to exit?');
+                if (!confirmed) return;
+              }
+              navigate('/');
+            }}
           >
             <Plane className="h-5 w-5" />
             <span className="text-lg font-bold">TripMatch</span>
