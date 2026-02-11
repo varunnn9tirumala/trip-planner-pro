@@ -1,1 +1,4 @@
 project_id = "rmmrnkkmjecoqkuqrmad"
+
+[functions.sara-chat]
+verify_jwt = false
