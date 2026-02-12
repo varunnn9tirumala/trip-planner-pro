@@ -29,9 +29,9 @@ serve(async (req) => {
   try {
     const { step, userInput, searchParams } = await req.json();
 
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) {
-      throw new Error("OPENAI_API_KEY is not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     // Build contextual prompt based on the current step
@@ -94,15 +94,15 @@ serve(async (req) => {
     }
 
     const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "google/gemini-3-flash-preview",
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
             { role: "user", content: stepPrompt },
@@ -115,7 +115,7 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("OpenAI API error:", response.status, errorText);
+      console.error("AI gateway error:", response.status, errorText);
       
       if (response.status === 429) {
         return new Response(
